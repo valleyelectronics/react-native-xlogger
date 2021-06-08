@@ -25,7 +25,7 @@ export const setUseReactronInstance = (instance: ReactotronInstance) => {
   Reactolog.setReactotronInstance(instance);
 }
 
-const configure = (settings: Partial<XLoggerConfig>) => {
+export const configure = (settings: Partial<XLoggerConfig>) => {
   currentConfig = {
     logLevel: settings?.logLevel || DEFAULT_CONFIG.logLevel,
     useCorrespondingConsoleMethod: settings?.useCorrespondingConsoleMethod ||
