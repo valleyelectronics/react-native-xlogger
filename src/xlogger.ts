@@ -8,6 +8,7 @@
 
 import * as Reactolog from './reactolog';
 import {ReactotronInstance} from './reactolog';
+import * as SentryLog from './sentry';
 import {LogLevel, Message, XLoggerConfig} from './types';
 
 const DEFAULT_CONFIG: XLoggerConfig = {
@@ -50,7 +51,11 @@ const appendPrefixes = (message: Message, logLevel: LogLevel) => {
   return message;
 }
 
-const logIfLevelLegit = (message: Message, bypassReactotron: boolean, level: LogLevel) => {
+export type BypassParams = { bypassReactotron: boolean; bypassSentry: boolean };
+
+
+const logIfLevelLegit = (message: Message, bypassParams: BypassParams, level: LogLevel) => {
+  const { bypassSentry, bypassReactotron } = bypassParams;
   if (level <= currentConfig.logLevel) {
     if (level === LogLevel.error && currentConfig.useCorrespondingConsoleMethod) {
       // eslint-disable-next-line no-console
@@ -62,7 +67,6 @@ const logIfLevelLegit = (message: Message, bypassReactotron: boolean, level: Log
       // eslint-disable-next-line no-console
       console.log(appendPrefixes(message, level));
     }
-
     if (currentConfig.useReactotron && !bypassReactotron) {
       Reactolog.log(message);
     }
@@ -86,6 +90,14 @@ export const setUseReactotron = (shouldUse: boolean) => {
 };
 
 /**
+ * Enables/disables Sentry logging
+ * @param shouldUse
+ */
+export const setUseSentry = (shouldUse: boolean) => {
+  currentConfig.useSentry = shouldUse;
+};
+
+/**
  * Maps logWarn to console.warn, and logError to console.error
  * @param shouldUse
  */
@@ -98,33 +110,37 @@ export const setUseCorrespondingConsoleMethod = (shouldUse: boolean) => {
  * @param message
  * @param bypassReactotron
  */
-export const log = (message: object, bypassReactotron = false) => {
+export const log = (message: object, { bypassReactotron = false, bypassSentry = true }) => {
   if (currentConfig.logLevel !== LogLevel.silent) {
     // eslint-disable-next-line no-console
     console.log(message);
     if (currentConfig.useReactotron && !bypassReactotron) {
       Reactolog.log(message);
     }
+    if (currentConfig.useSentry && !bypassSentry) {
+      SentryLog.log(message, LogLevel.info);
+    }
   }
 };
 
-export const logSilly = (message: object, bypassReactotron = false) => logIfLevelLegit
-(message, bypassReactotron, LogLevel.silly);
+export const logSilly = (message: object, { bypassReactotron = false, bypassSentry = true }) => logIfLevelLegit
+(message, { bypassReactotron, bypassSentry }, LogLevel.silly);
 
-export const logVerbose = (message: object, bypassReactotron = false) =>
-  logIfLevelLegit(message, bypassReactotron, LogLevel.verbose);
+export const logVerbose = (message: object, { bypassReactotron = false, bypassSentry = true }) =>
+  logIfLevelLegit(message, {bypassReactotron, bypassSentry}, LogLevel.verbose);
 
-export const logInfo = (message: object, bypassReactotron = false) =>
-  logIfLevelLegit(message, bypassReactotron, LogLevel.info);
+export const logInfo = (message: object, { bypassReactotron = false, bypassSentry = true }) =>
+  logIfLevelLegit(message, {bypassReactotron, bypassSentry}, LogLevel.info);
 
-export const logWarn = (message: object, bypassReactotron = false) =>
-  logIfLevelLegit(message, bypassReactotron, LogLevel.warn);
+// for Warn level, default is not to bypass sentry
+export const logWarn = (message: object, { bypassReactotron = false, bypassSentry = false }) =>
+  logIfLevelLegit(message, {bypassSentry, bypassReactotron}, LogLevel.warn);
 
-export const logError = (message: object, bypassReactotron = false) =>
-  logIfLevelLegit(message, bypassReactotron, LogLevel.error);
+export const logError = (message: object, { bypassReactotron = false, bypassSentry = false }) =>
+  logIfLevelLegit(message,{ bypassReactotron, bypassSentry}, LogLevel.error);
 
-export const logDebug = (message: object, bypassReactotron = false) =>
-  logIfLevelLegit(message, bypassReactotron, LogLevel.debug);
+export const logDebug = (message: object, { bypassReactotron = false, bypassSentry = true }) =>
+  logIfLevelLegit(message, {bypassReactotron, bypassSentry}, LogLevel.debug);
 
 // direct access, only if turned on.
 export const reactotron = {
@@ -144,6 +160,12 @@ export const reactotron = {
     }
   },
 };
+
+export const sentry = {
+  log: SentryLog.log,
+  logFatal: SentryLog.logFatal,
+  logCritical: SentryLog.logCritical
+}
 
 // synonyms
 export const silly = logSilly;
