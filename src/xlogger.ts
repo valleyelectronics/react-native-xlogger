@@ -8,51 +8,72 @@
 
 import * as Reactolog from './reactolog';
 import {ReactotronInstance} from './reactolog';
+import {LogLevel, Message, XLoggerConfig} from './types';
 
-export enum LogLevel {
-    silent,
-    error,
-    warn,
-    debug,
-    info,
-    verbose,
-    silly
+const DEFAULT_CONFIG: XLoggerConfig = {
+  logLevel: LogLevel.debug,
+  useCorrespondingConsoleMethod: true,
+  useReactotron: false,
+  useSentry: false,
+  printLogLevel: true,
+  printLogTime: false,
 }
+
+let currentConfig = DEFAULT_CONFIG;
 
 export const setUseReactronInstance = (instance: ReactotronInstance) => {
-    Reactolog.setReactotronInstance(instance);
+  Reactolog.setReactotronInstance(instance);
 }
 
-let logLevel = LogLevel.debug;
-let useCorrespondingConsoleMethod = true;
-let useReactotron = false;
+const configure = (settings: Partial<XLoggerConfig>) => {
+  currentConfig = {
+    logLevel: settings?.logLevel || DEFAULT_CONFIG.logLevel,
+    useCorrespondingConsoleMethod: settings?.useCorrespondingConsoleMethod ||
+      DEFAULT_CONFIG.useCorrespondingConsoleMethod,
+    useReactotron: settings?.useReactotron || DEFAULT_CONFIG.useReactotron,
+    useSentry: settings?.useSentry || DEFAULT_CONFIG.useSentry,
+    printLogLevel: settings?.printLogLevel || DEFAULT_CONFIG.printLogLevel,
+    printLogTime: settings?.printLogTime || DEFAULT_CONFIG.printLogTime
+  }
+}
 
-const logIfLevelLegit = (message: object, bypassReactotron: boolean, level: LogLevel) => {
-    if (level <= logLevel) {
-        if (level === LogLevel.error && useCorrespondingConsoleMethod) {
-            // eslint-disable-next-line no-console
-            console.error(message);
-        } else if (level === LogLevel.warn && useCorrespondingConsoleMethod) {
-            // eslint-disable-next-line no-console
-            console.warn(message);
-        } else {
-            // eslint-disable-next-line no-console
-            console.log(message);
-        }
+const appendPrefixes = (message: Message, logLevel: LogLevel) => {
+  if (message instanceof String || message instanceof Number) {
+    const llPrefix = currentConfig.printLogLevel ? `[${logLevel}]` : '';
+    const now = new Date();
+    const ltPrefix = currentConfig.printLogTime ?
+      `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}}` : '';
+    return `${llPrefix}${ltPrefix}${message}`;
+  }
+  // no prefixes on objects
+  return message;
+}
 
-        if (useReactotron && !bypassReactotron) {
-            Reactolog.log(message);
-        }
+const logIfLevelLegit = (message: Message, bypassReactotron: boolean, level: LogLevel) => {
+  if (level <= currentConfig.logLevel) {
+    if (level === LogLevel.error && currentConfig.useCorrespondingConsoleMethod) {
+      // eslint-disable-next-line no-console
+      console.error(appendPrefixes(message, level));
+    } else if (level === LogLevel.warn && currentConfig.useCorrespondingConsoleMethod) {
+      // eslint-disable-next-line no-console
+      console.warn(appendPrefixes(message, level));
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(appendPrefixes(message, level));
     }
-};
 
+    if (currentConfig.useReactotron && !bypassReactotron) {
+      Reactolog.log(message);
+    }
+  }
+};
 
 /**
  * Sets the logLevel, if it is in the list of legit ones above.
  * @param level
  */
 export const setLogLevel = (level: LogLevel) => {
-    logLevel = level;
+  currentConfig.logLevel = level;
 };
 
 /**
@@ -60,7 +81,7 @@ export const setLogLevel = (level: LogLevel) => {
  * @param shouldUse
  */
 export const setUseReactotron = (shouldUse: boolean) => {
-    useReactotron = shouldUse;
+  currentConfig.useReactotron = shouldUse;
 };
 
 /**
@@ -68,7 +89,7 @@ export const setUseReactotron = (shouldUse: boolean) => {
  * @param shouldUse
  */
 export const setUseCorrespondingConsoleMethod = (shouldUse: boolean) => {
-    useCorrespondingConsoleMethod = shouldUse;
+  currentConfig.useCorrespondingConsoleMethod = shouldUse;
 };
 
 /**
@@ -77,50 +98,50 @@ export const setUseCorrespondingConsoleMethod = (shouldUse: boolean) => {
  * @param bypassReactotron
  */
 export const log = (message: object, bypassReactotron = false) => {
-    if (logLevel !== LogLevel.silent) {
-        // eslint-disable-next-line no-console
-        console.log(message);
-        if (useReactotron && !bypassReactotron) {
-            Reactolog.log(message);
-        }
+  if (currentConfig.logLevel !== LogLevel.silent) {
+    // eslint-disable-next-line no-console
+    console.log(message);
+    if (currentConfig.useReactotron && !bypassReactotron) {
+      Reactolog.log(message);
     }
+  }
 };
 
 export const logSilly = (message: object, bypassReactotron = false) => logIfLevelLegit
 (message, bypassReactotron, LogLevel.silly);
 
 export const logVerbose = (message: object, bypassReactotron = false) =>
-    logIfLevelLegit(message, bypassReactotron, LogLevel.verbose);
+  logIfLevelLegit(message, bypassReactotron, LogLevel.verbose);
 
 export const logInfo = (message: object, bypassReactotron = false) =>
-    logIfLevelLegit(message, bypassReactotron, LogLevel.info);
+  logIfLevelLegit(message, bypassReactotron, LogLevel.info);
 
 export const logWarn = (message: object, bypassReactotron = false) =>
-    logIfLevelLegit(message, bypassReactotron, LogLevel.warn);
+  logIfLevelLegit(message, bypassReactotron, LogLevel.warn);
 
 export const logError = (message: object, bypassReactotron = false) =>
-    logIfLevelLegit(message, bypassReactotron, LogLevel.error);
+  logIfLevelLegit(message, bypassReactotron, LogLevel.error);
 
 export const logDebug = (message: object, bypassReactotron = false) =>
-    logIfLevelLegit(message, bypassReactotron, LogLevel.debug);
+  logIfLevelLegit(message, bypassReactotron, LogLevel.debug);
 
 // direct access, only if turned on.
 export const reactotron = {
-    log: (message: object) => {
-        if (useReactotron) {
-            Reactolog.log(message);
-        }
-    },
-    logImportant: (message: object) => {
-        if (useReactotron) {
-            Reactolog.logImportant(message);
-        }
-    },
-    display: (object: object) => {
-        if (useReactotron) {
-            Reactolog.display(object);
-        }
-    },
+  log: (message: object) => {
+    if (currentConfig.useReactotron) {
+      Reactolog.log(message);
+    }
+  },
+  logImportant: (message: object) => {
+    if (currentConfig.useReactotron) {
+      Reactolog.logImportant(message);
+    }
+  },
+  display: (object: object) => {
+    if (currentConfig.useReactotron) {
+      Reactolog.display(object);
+    }
+  },
 };
 
 // synonyms

@@ -7,24 +7,25 @@
  **********************************/
 
 import Reactotron from 'reactotron-react-native';
+import { Message } from './types';
 
 export type ReactotronInstance = typeof Reactotron;
 
 let reactotronInstance: ReactotronInstance
 
-export const log = (message: object) => {
+export const log = (message: Message) => {
     if (reactotronInstance !== undefined) {
         reactotronInstance.log!(message);
     }
 };
 
-export const logImportant = (message: object) => {
+export const logImportant = (message: Message) => {
     if (reactotronInstance !== undefined) {
         reactotronInstance.logImportant!(message);
     }
 };
 
-export const display = (message: object) => {
+export const display = (message: Message) => {
     if (reactotronInstance !== undefined) {
         reactotronInstance.display(message);
     }
