@@ -1,0 +1,18 @@
+{
+  "name": "react-native-xlogger",
+  "version": "1.0.0",
+  "description": "Flexible logger for React Native that supports Reactotron, Sentry and console",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "author": "Mitch Kahn",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
+    "eslint": "^7.28.0",
+    "typescript": "^4.3.2"
+  }
+}
