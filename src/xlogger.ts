@@ -43,8 +43,8 @@ const appendPrefixes = (message: Message, logLevel: LogLevel) => {
     const llPrefix = currentConfig.printLogLevel ? `[${logLevel}]` : '';
     const now = new Date();
     const ltPrefix = currentConfig.printLogTime ?
-      `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}}` : '';
-    return `${llPrefix}${ltPrefix}${message}`;
+      `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}]` : '';
+    return `${ltPrefix}${llPrefix}  ${message}`;
   }
   // no prefixes on objects
   return message;
