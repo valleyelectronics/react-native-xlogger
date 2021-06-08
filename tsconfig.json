@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "target": "es5",
+    "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
     "jsx": "react-native",
     "skipLibCheck": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "sourceMap": true
   },
   "include": [
     "src"
