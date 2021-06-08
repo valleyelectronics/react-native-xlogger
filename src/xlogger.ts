@@ -38,7 +38,8 @@ export const configure = (settings: Partial<XLoggerConfig>) => {
 }
 
 const appendPrefixes = (message: Message, logLevel: LogLevel) => {
-  if (message instanceof String || message instanceof Number) {
+  const t = typeof message; // instanceof doesn't work on literals
+  if ( t === 'string' || t === 'number') {
     const llPrefix = currentConfig.printLogLevel ? `[${logLevel}]` : '';
     const now = new Date();
     const ltPrefix = currentConfig.printLogTime ?
