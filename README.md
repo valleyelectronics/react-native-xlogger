@@ -41,7 +41,7 @@ RNX supports the following log levels:
 - `LogLevel.silly`: equivalent of `console.log`. Maps to `Severity.Debug` for Sentry
 
 When a log level is set for RNX, messages of that level and above are enabled. For example, if you set the
-log level to `debug` then only `debug`, warn` and `error` messages will be logged.
+log level to `debug` then only `debug`, `warn` and `error` messages will be logged.
 
 Sentry has additional default squelch settings in order to reduce noise on the Sentry Dashboard (see below).
 
@@ -78,12 +78,12 @@ for this. Also, prepending does not occur for parameters that are not a string o
 
 ## Reactotron Logger
 
-One of the reasons XLogger was written was to avoid the suggested "monkey patching" of `console` suggested by the
-Reactotron team ("`console.tron`"). In XLogger, all Reactotron calls are wrapped to enable simple disable of Reactotron
-in production mode. This wrapping also checks to see whether a configured Reactotron instance exists before trying to
-log. The monkey patching approach does not do this and can result in crashes.
+One of the reasons XLogger was written was to avoid the suggested "monkey patching" of `console` by the
+Reactotron team ("`console.tron`"). In XLogger, all Reactotron calls are wrapped to enable easy disable of Reactotron
+in production. This wrapping also checks to see whether a configured Reactotron instance exists before trying to
+log. The monkey patching approach does not do this, and can result in crashes.
 
-To enable Reactotron logging, you must both pass a configured Reactotron instance *and* enable it with the `useReactotron` 
+To enable Reactotron logging, you must pass *both* a configured Reactotron instance *and* enable it with the `useReactotron` 
 flag. In addition, you can directly access special purpose Reactotron log methods via the `XLogger.reactotron` object.
 
 | Method                            | Maps to                              |
