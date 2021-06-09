@@ -70,6 +70,9 @@ const logIfLevelLegit = (message: Message, bypassParams: BypassParams, level: Lo
     if (currentConfig.useReactotron && !bypassReactotron) {
       Reactolog.log(message);
     }
+    if (currentConfig.useSentry && !bypassSentry) {
+      SentryLog.log(message,level);
+    }
   }
 };
 

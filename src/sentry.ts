@@ -35,8 +35,8 @@ const captureMessage = (message: Message, severity: Severity) => {
     Sentry.captureMessage( reduceToSentryMessage(message), severity);
 }
 
-export const log = (message: Message, logLevel: LogLevel ) => {
-    captureMessage( message, mapLogLevelToSeverity(logLevel));
+export const log = (message: Message | Exception, logLevel: LogLevel ) => {
+   captureMessage( message, mapLogLevelToSeverity(logLevel));
 };
 
 // not sure these will be used, but here you go
