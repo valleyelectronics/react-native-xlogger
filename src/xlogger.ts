@@ -10,6 +10,7 @@ import * as Reactolog from './reactolog';
 import {ReactotronInstance} from './reactolog';
 import * as SentryLog from './sentry';
 import {LogLevel, Message, XLoggerConfig} from './types';
+import {descriptionForLevel} from "./helpers";
 
 const DEFAULT_CONFIG: XLoggerConfig = {
   logLevel: LogLevel.debug,
@@ -41,7 +42,7 @@ export const configure = (settings: Partial<XLoggerConfig>) => {
 const appendPrefixes = (message: Message, logLevel: LogLevel) => {
   const t = typeof message; // instanceof doesn't work on literals
   if ( t === 'string' || t === 'number') {
-    const llPrefix = currentConfig.printLogLevel ? `[${logLevel}]` : '';
+    const llPrefix = currentConfig.printLogLevel ? `[${descriptionForLevel(logLevel)}]` : '';
     const now = new Date();
     const ltPrefix = currentConfig.printLogTime ?
       `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}]` : '';

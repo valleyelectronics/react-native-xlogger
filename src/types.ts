@@ -1,13 +1,13 @@
 export type Message = object | string | number;
 
 export enum LogLevel {
-  silent = 'silent',
-  error = 'error',
-  warn = 'warn',
-  debug = 'debug',
-  info = 'info',
-  verbose = 'verbose',
-  silly = 'silly'
+  silent ,
+  error,
+  warn ,
+  debug ,
+  info,
+  verbose,
+  silly
 }
 
 export interface XLoggerConfig {
