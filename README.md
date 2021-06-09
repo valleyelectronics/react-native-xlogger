@@ -11,7 +11,7 @@ https://github.com/onubo/react-native-logs.
 2. Calls to `XLogger.logXXX` will then format and forward messages to `console`, Reactotron and Sentry depending on the 
 config and log level settings.
    
-
+```typescript
     import * as XLogger from 'react-native-xlogger';
     const { LogLevel } = XLogger;
 
@@ -27,6 +27,7 @@ config and log level settings.
     XLogger.silly('This is a silly message');
     // squelch the logger
     XLogger.setLogLevel( LogLevel.silent );
+```
 
 ## Log Levels
 
