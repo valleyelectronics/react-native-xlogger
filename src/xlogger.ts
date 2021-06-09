@@ -23,7 +23,7 @@ const DEFAULT_CONFIG: XLoggerConfig = {
 
 let currentConfig = DEFAULT_CONFIG;
 
-export const setUseReactronInstance = (instance: ReactotronInstance) => {
+export const setReactronInstance = (instance: ReactotronInstance) => {
   currentConfig.reactotronInstance = instance;
   Reactolog.setReactotronInstance(instance);
 }
@@ -118,7 +118,7 @@ export const setUseCorrespondingConsoleMethod = (shouldUse: boolean) => {
  * @param message
  * @param bypassParams
  */
-export const log = (message: object, bypassParams: BypassParams = { bypassSentry: true, bypassReactotron: false } ) => {
+export const out = (message: object, bypassParams: BypassParams = { bypassSentry: true, bypassReactotron: false } ) => {
   if (currentConfig.logLevel !== LogLevel.silent) {
     // eslint-disable-next-line no-console
     console.log(message);
@@ -141,10 +141,10 @@ export const logInfo = (message: object, bypassParams: BypassParams = { bypassRe
   logIfLevelLegit(message, bypassParams, LogLevel.info);
 
 // for Warn level, default is not to bypass sentry
-export const logWarn = (message: object, bypassParams: BypassParams = { bypassReactotron: false, bypassSentry: true }) =>
+export const logWarn = (message: object, bypassParams: BypassParams = { bypassReactotron: false, bypassSentry: false }) =>
   logIfLevelLegit(message, bypassParams, LogLevel.warn);
 
-export const logError = (message: object, bypassParams: BypassParams = { bypassReactotron: false, bypassSentry: true }) =>
+export const logError = (message: object, bypassParams: BypassParams = { bypassReactotron: false, bypassSentry: false }) =>
   logIfLevelLegit(message,bypassParams, LogLevel.error);
 
 export const logDebug = (message: object, bypassParams: BypassParams = { bypassReactotron: false, bypassSentry: true }) =>
@@ -182,3 +182,5 @@ export const info = logInfo;
 export const warn = logWarn;
 export const error = logError;
 export const debug = logDebug;
+// backwards compatible, kind of, with the old confusing `log` method.
+export const log = logDebug;
