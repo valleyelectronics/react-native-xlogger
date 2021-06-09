@@ -7,11 +7,9 @@
  **********************************/
 
 import Reactotron from 'reactotron-react-native';
-import { Message } from './types';
+import {Message, ReactotronInstance} from './types';
 
-export type ReactotronInstance = typeof Reactotron;
-
-let reactotronInstance: ReactotronInstance
+let reactotronInstance: ReactotronInstance | undefined;
 
 export const log = (message: Message) => {
     if (reactotronInstance !== undefined) {
@@ -32,4 +30,4 @@ export const display = (message: Message) => {
 };
 
 // Pass in the configured reference
-export const setReactotronInstance = (instance: typeof Reactotron) => reactotronInstance = instance;
+export const setReactotronInstance = (instance: typeof Reactotron | undefined) => reactotronInstance = instance;

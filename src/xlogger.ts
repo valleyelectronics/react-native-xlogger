@@ -7,14 +7,14 @@
  **********************************/
 
 import * as Reactolog from './reactolog';
-import {ReactotronInstance} from './reactolog';
 import * as SentryLog from './sentry';
-import {LogLevel, Message, XLoggerConfig} from './types';
+import {LogLevel, Message, XLoggerConfig, ReactotronInstance} from './types';
 import {descriptionForLevel} from "./helpers";
 
 const DEFAULT_CONFIG: XLoggerConfig = {
   logLevel: LogLevel.debug,
   useCorrespondingConsoleMethod: true,
+  reactotronInstance: undefined,
   useReactotron: false,
   useSentry: false,
   printLogLevel: true,
@@ -24,6 +24,7 @@ const DEFAULT_CONFIG: XLoggerConfig = {
 let currentConfig = DEFAULT_CONFIG;
 
 export const setUseReactronInstance = (instance: ReactotronInstance) => {
+  currentConfig.reactotronInstance = instance;
   Reactolog.setReactotronInstance(instance);
 }
 
@@ -32,10 +33,14 @@ export const configure = (settings: Partial<XLoggerConfig>) => {
     logLevel: settings?.logLevel || DEFAULT_CONFIG.logLevel,
     useCorrespondingConsoleMethod: settings?.useCorrespondingConsoleMethod ||
       DEFAULT_CONFIG.useCorrespondingConsoleMethod,
+    reactotronInstance: settings?.reactotronInstance || DEFAULT_CONFIG.reactotronInstance,
     useReactotron: settings?.useReactotron || DEFAULT_CONFIG.useReactotron,
     useSentry: settings?.useSentry || DEFAULT_CONFIG.useSentry,
     printLogLevel: settings?.printLogLevel || DEFAULT_CONFIG.printLogLevel,
     printLogTime: settings?.printLogTime || DEFAULT_CONFIG.printLogTime
+  }
+  if (settings?.reactotronInstance){
+    Reactolog.setReactotronInstance(settings.reactotronInstance);
   }
 }
 
@@ -54,7 +59,6 @@ const appendPrefixes = (message: Message, logLevel: LogLevel) => {
 
 export type BypassParams = { bypassReactotron: boolean; bypassSentry: boolean };
 
-
 const logIfLevelLegit = (message: Message, bypassParams: BypassParams, level: LogLevel) => {
   const { bypassSentry, bypassReactotron } = bypassParams;
   if (level <= currentConfig.logLevel) {
@@ -68,7 +72,7 @@ const logIfLevelLegit = (message: Message, bypassParams: BypassParams, level: Lo
       // eslint-disable-next-line no-console
       console.log(appendPrefixes(message, level));
     }
-    if (currentConfig.useReactotron && !bypassReactotron) {
+    if (currentConfig.reactotronInstance && !bypassReactotron) {
       Reactolog.log(message);
     }
     if (currentConfig.useSentry && !bypassSentry) {

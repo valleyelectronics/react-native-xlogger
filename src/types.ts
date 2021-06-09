@@ -1,3 +1,6 @@
+import Reactotron from 'reactotron-react-native';
+
+export type ReactotronInstance = typeof Reactotron;
 export type Message = object | string | number;
 
 export enum LogLevel {
@@ -13,8 +16,9 @@ export enum LogLevel {
 export interface XLoggerConfig {
   logLevel: LogLevel;
   useCorrespondingConsoleMethod: boolean;
-  useReactotron: boolean;
   useSentry: boolean;
   printLogLevel: boolean;
   printLogTime: boolean;
+  reactotronInstance?: ReactotronInstance;
+  useReactotron: boolean;
 }
