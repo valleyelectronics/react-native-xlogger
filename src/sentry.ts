@@ -2,8 +2,8 @@
  File:       sentry.js
  Function:   Does Sentry logging
  Copyright:  Bertco LLC
- Date:       2021-06-08
- Author:     mkahn
+ Date:       2022-02-21
+ Author:     mkahn, chreck
  **********************************/
 
 import * as Sentry from '@sentry/react-native';
@@ -29,26 +29,32 @@ const mapLogLevelToSeverity = (logLevel: LogLevel) => {
 }
 
 // if it's a primitive, sent it directly, otherwise stringify
-const reduceToSentryMessage = (message: Message) => isStringOrNumber(message) ? `${message}` : JSON.stringify(message);
+const reduceToSentryMessage = (message: Message | Exception) => isStringOrNumber(message) ? `${message}` : JSON.stringify(message);
 
-const captureMessage = (message: Message, severity: Severity) => {
+const captureMessage = (message: Message | Exception, severity: Severity) => {
     Sentry.captureMessage( reduceToSentryMessage(message), severity);
 }
 
-export const log = (message: Message | Exception, logLevel: LogLevel ) => {
+export const log = (message: Message | Exception, logLevel: LogLevel ): void => {
    captureMessage( message, mapLogLevelToSeverity(logLevel));
 };
 
 // not sure these will be used, but here you go
-export const logCritical = (message: Message) => {
+export const logCritical = (message: Message): void => {
     captureMessage(message, Severity.Critical)
 };
 
-export const logFatal = (message: Message) => {
+export const logFatal = (message: Message): void => {
   captureMessage(message, Severity.Fatal)
 };
 
 // this is probably not useful
-export const captureException = (e: Exception) => {
+export const captureException = (e: Exception): void => {
     Sentry.captureException(e);
 };
+
+export const addBreadcrumb = (obj: Message, logLevel: LogLevel ): void => {
+  const message = reduceToSentryMessage(obj)
+  const level = mapLogLevelToSeverity(logLevel)
+  Sentry.addBreadcrumb({ message, level })
+}
