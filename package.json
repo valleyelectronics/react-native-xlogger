@@ -1,6 +1,6 @@
 {
   "name": "react-native-xlogger",
-  "version": "1.1.8",
+  "version": "2.0.0",
   "description": "Flexible logger for React Native that supports Reactotron, Sentry and console",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -9,11 +9,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/makahn64/react-native-xlogger.git"
+    "url": "git+https://github.com/valleyelectronics/react-native-xlogger.git"
   },
   "keywords": ["react native", "logger", "logging"],
-  "homepage": "https://github.com/makahn64/react-native-xlogger#readme",
-  "author": "Mitch Kahn",
+  "homepage": "https://github.com/valleyelectronics/react-native-xlogger#readme",
+  "author": "Mitch Kahn, Christoph Eck",
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
