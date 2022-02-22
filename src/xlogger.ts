@@ -15,15 +15,15 @@ const DEFAULT_CONFIG: XLoggerConfig = {
   logLevel: LogLevel.debug,
   console: {
     enabled: true,
-    printLogLevel: true,
+    printLogLevel: false,
     printLogTime: false,
   },
   sentry: {
     enabled: false,
     logLevel: LogLevel.debug,
-    useCaptureWarn: true,
-    useCaptureError: true,
-    useBreadcrumbs: false,
+    useCaptureWarn: false,
+    useCaptureError: false,
+    useBreadcrumbs: true,
   },
   reactotron: {
     enabled: false,
