@@ -28,8 +28,21 @@ const mapLogLevelToSeverity = (logLevel: LogLevel) => {
   return Severity.Log;
 }
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet;
+  return (_key: any, value: any) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+
 // if it's a primitive, sent it directly, otherwise stringify
-const reduceToSentryMessage = (message: Message | Exception) => isStringOrNumber(message) ? `${message}` : JSON.stringify(message);
+const reduceToSentryMessage = (message: Message | Exception) => isStringOrNumber(message) ? `${message}` : JSON.stringify(message, getCircularReplacer());
 
 const captureMessage = (message: Message | Exception, severity: Severity) => {
     Sentry.captureMessage( reduceToSentryMessage(message), severity);
