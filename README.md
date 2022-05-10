@@ -47,8 +47,8 @@ RNX supports the following log levels:
 - `LogLevel.silent`: all logs, except direct logs (see below), are squelched
 - `LogLevel.error`: equivalent of `console.error`. Maps to `Severity.Error` for Sentry
 - `LogLevel.warn`: equivalent of `console.warn`.   Maps to `Severity.Warning` for Sentry
-- `LogLevel.debug`: equivalent of `console.log`. Maps to `Severity.Debug` for Sentry
 - `LogLevel.info`: equivalent of `console.log`. Maps to `Severity.Log` for Sentry
+- `LogLevel.debug`: equivalent of `console.log`. Maps to `Severity.Debug` for Sentry
 - `LogLevel.verbose`: equivalent of `console.log`. Maps to `Severity.Debug` for Sentry
 - `LogLevel.silly`: equivalent of `console.log`. Maps to `Severity.Debug` for Sentry
 

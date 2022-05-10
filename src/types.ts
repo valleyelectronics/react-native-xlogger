@@ -4,13 +4,13 @@ export type ReactotronInstance = typeof Reactotron;
 export type Message = string | number | Record<string, unknown>;
 
 export enum LogLevel {
-  silent,
-  error,
-  warn,
-  debug,
-  info,
-  verbose,
-  silly,
+  silent = 0,
+  error = 1,
+  warn = 2,
+  info = 3,
+  debug = 4,
+  verbose = 5,
+  silly = 6
 }
 
 export interface XLoggerConfigConsole {
