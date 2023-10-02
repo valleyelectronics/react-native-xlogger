@@ -7,25 +7,26 @@
  **********************************/
 
 import * as Sentry from '@sentry/react-native';
-import {Exception, Severity} from '@sentry/react-native';
+import type { Severity, SeverityLevel} from '@sentry/types';
+import {Exception} from '@sentry/react-native';
 import {LogLevel, Message} from './types';
 import {isStringOrNumber} from "./helpers";
 
 // Severity has additional levels like Fatal and Critical that we're not using
-const mapLogLevelToSeverity = (logLevel: LogLevel) => {
+const mapLogLevelToSeverity = (logLevel: LogLevel): SeverityLevel => {
   switch (logLevel) {
     case LogLevel.silent:
     case LogLevel.silly:
     case LogLevel.debug:
-      return Severity.Debug;
+      return 'debug'
     case LogLevel.warn:
-      return Severity.Warning;
+      return 'warning';
     case LogLevel.info:
-      return Severity.Log;
+      return 'info';
     case LogLevel.error:
-      return Severity.Error;
+      return 'error';
   }
-  return Severity.Log;
+  return 'log';
 }
 
 const getCircularReplacer = () => {
@@ -44,7 +45,7 @@ const getCircularReplacer = () => {
 // if it's a primitive, sent it directly, otherwise stringify
 const reduceToSentryMessage = (message: Message | Exception) => isStringOrNumber(message) ? `${message}` : JSON.stringify(message, getCircularReplacer());
 
-const captureMessage = (message: Message | Exception, severity: Severity) => {
+const captureMessage = (message: Message | Exception, severity: Severity | SeverityLevel | undefined) => {
     Sentry.captureMessage( reduceToSentryMessage(message), severity);
 }
 
@@ -54,11 +55,11 @@ export const log = (message: Message | Exception, logLevel: LogLevel ): void => 
 
 // not sure these will be used, but here you go
 export const logCritical = (message: Message): void => {
-    captureMessage(message, Severity.Critical)
+    captureMessage(message, 'fatal')
 };
 
 export const logFatal = (message: Message): void => {
-  captureMessage(message, Severity.Fatal)
+  captureMessage(message, 'fatal')
 };
 
 // this is probably not useful
